@@ -12,7 +12,7 @@
       --bg:#fafafa; --fg:#111; --muted:#666; --card:#fff; --border:#e6e6e6; --accent:#2563eb;
       --ring: color-mix(in oklab, var(--accent) 40%, white);
       --radius:16px; --gap:16px; --shadow:0 4px 16px rgba(0,0,0,.08);
-      --control-h: 44px; /* unified control height for search + chips */
+      --control-h: 44px;
     }
     @media (prefers-color-scheme: dark){
       :root:not([data-theme]){
@@ -31,50 +31,43 @@
 
     html,body{ height:100%; }
     body{ margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Noto Color Emoji, sans-serif; }
-
     .wrap{ max-width:1100px; margin:auto; padding: clamp(16px, 4vw, 28px); }
 
     header{ display:grid; gap:12px; margin-block:20px 10px; align-items:center; grid-template-columns: 1fr auto; }
     .title{ font-size: clamp(22px, 2.2vw + 12px, 34px); font-weight:700; letter-spacing:.2px; }
     .subtitle{ grid-column:1 / -1; color:var(--muted); margin-top:-6px; }
-
-    
+    .no-results{ grid-column: 1 / -1; display:none; }
 
     .controls{ display:flex; flex-wrap:wrap; gap:12px; margin:12px 0 6px; align-items:center; }
     .search{ position:relative; flex:1 1 320px; min-width:260px; }
     .search input{
       width:100%; height: var(--control-h);
-      padding: 0 44px 0 40px; /* right/left to clear the icon */
+      padding: 0 44px 0 40px;
       border-radius:999px; border:1px solid var(--border); background:var(--card); color:var(--fg);
       box-shadow:var(--shadow);
     }
-    .search svg{
-      position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:.7;
-    }
+    .search svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:.7; }
 
     .toggle {
-  border: none;              /* removes the outline */
-  background: transparent;   /* makes it blend into header */
-  box-shadow: none;          /* optional: removes drop shadow */
-  padding: 4px;              /* tighter click area, tweak to taste */
-  border-radius: 50%;        /* makes it a clean round icon button */
-  color: var(--fg);          /* keep consistent color */
-  cursor: pointer;
-}
-
+      border: none; background: transparent; box-shadow: none;
+      padding: 4px; border-radius: 50%; color: var(--fg); cursor: pointer;
+    }
 
     .filters{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
     .chip{
-      height: var(--control-h);
-      line-height: calc(var(--control-h) - 2px); /* visually centered text */
-      padding: 0 14px;
-      border-radius:999px; border:1px solid var(--border);
+      height: var(--control-h); line-height: calc(var(--control-h) - 2px);
+      padding: 0 14px; border-radius:999px; border:1px solid var(--border);
       background:var(--card); color:var(--fg); cursor:pointer; user-select:none;
     }
     .chip[aria-pressed="true"]{ outline:2px solid var(--ring); border-color:transparent; }
 
     .grid{ display:grid; gap:var(--gap); grid-template-columns: repeat( auto-fit, minmax(260px, 1fr) ); margin-top:14px; }
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow); transition: transform .15s ease, box-shadow .2s ease; }
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      cursor: default;
+    }
     .card:focus-within, .card:hover{ transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.12); }
     .card h3{ margin:0; font-size:18px; letter-spacing:.2px; }
     .card p{ margin:0; color:var(--muted); }
@@ -89,77 +82,51 @@
     footer{ color:var(--muted); font-size:14px; text-align:center; margin:24px 0 12px; }
 
     /* Icon swapping by mode (auto | light | dark) */
-#modeIconAuto, #modeIconSun, #modeIconMoon { display: none; }
-#modeBtn[data-mode="auto"]  #modeIconAuto { display: inline; }
-#modeBtn[data-mode="light"] #modeIconSun  { display: inline; }
-#modeBtn[data-mode="dark"]  #modeIconMoon { display: inline; }
-    
+    #modeIconAuto, #modeIconSun, #modeIconMoon { display: none; }
+    #modeBtn[data-mode="auto"]  #modeIconAuto { display: inline; }
+    #modeBtn[data-mode="light"] #modeIconSun  { display: inline; }
+    #modeBtn[data-mode="dark"]  #modeIconMoon { display: inline; }
 
-    /* Visually hidden but accessible (for the label) */
-    .sr-only {
+    .sr-only{
       position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important;
       overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important;
     }
 
     @media (prefers-reduced-motion: reduce){ .card{ transition:none } .card:hover{ transform:none } }
 
-   /* ==== Card hover + drag visuals ==== */
-.drag-chosen {
-  transform: scale(.995);
-  box-shadow: 0 10px 32px rgba(0,0,0,.18);
-}
-.drag-ghost {
-  opacity: .35;
-}
+    /* ==== Card hover + drag visuals ==== */
+    .drag-chosen { transform: scale(.995); box-shadow: 0 10px 32px rgba(0,0,0,.18); }
+    .drag-ghost  { opacity: .35; }
+    .card:hover  { background: color-mix(in oklab, var(--accent) 4%, var(--card)); }
+    .card.drag-chosen { transform: scale(.98); box-shadow: 0 12px 32px rgba(0,0,0,.2); }
 
-.card {
-  cursor: default;
-  touch-action: none;
-  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-}
+    /* Desktop-only drag handle */
+    @media (hover: hover) and (pointer: fine){
+      .card h3{
+        cursor: move;
+        user-select: none; -webkit-user-select: none;
+        touch-action: none;
+      }
+    }
 
-.card h3 {
-  cursor: move; /* arrow+cross drag cursor */
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none;
-}
+    /* Touch devices: normal scrolling & selection */
+    @media (hover: none){
+      .card { touch-action: auto; }
+      .card h3{ cursor: default; user-select: text; -webkit-user-select: text; touch-action: auto; }
+    }
 
-.card:hover {
-  /* transform: translateY(-2px); */
-  box-shadow: 0 8px 28px rgba(0,0,0,.12);
-  background: color-mix(in oklab, var(--accent) 4%, var(--card));
-}
-
-.card.drag-chosen {
-  transform: scale(.98);
-  box-shadow: 0 12px 32px rgba(0,0,0,.2);
-}
-
-/* ==== Button hover harmony ==== */
-.btn {
-  transition: background .15s ease, outline .15s ease, color .15s ease;
-}
-
-.btn:hover {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-   transform: scale(1.02); /* slight lift */
-}
-
-.btn.primary:hover {
-  background: color-mix(in oklab, var(--accent) 85%, black);
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  transform: scale(1.02); /* same lift */
-}
-
-
-
-
+    /* ==== Button hover harmony ==== */
+    .btn{
+      transition: background .15s ease, outline .15s ease, color .15s ease, transform .15s ease;
+    }
+    .btn:hover{
+      outline: 2px solid var(--accent); outline-offset: 2px; transform: scale(1.02);
+    }
+    .btn.primary:hover{
+      background: color-mix(in oklab, var(--accent) 85%, black);
+      outline: 2px solid var(--accent); outline-offset: 2px; transform: scale(1.02);
+    }
   </style>
-
-
 </head>
 <body>
   <div class="wrap">
@@ -169,48 +136,17 @@
         <div class="subtitle">Interactive tools and simulations for physics, math, and beyond.</div>
       </div>
       <button id="modeBtn" class="toggle" aria-pressed="false" title="Toggle theme (Auto/Light/Dark)">
-  <!-- Auto: monitor -->
-  <svg id="modeIconAuto" width="18" height="18" viewBox="0 0 24 24" fill="none"
-       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <rect x="3" y="4" width="18" height="12" rx="2" ry="2"></rect>
-    <line x1="8" y1="20" x2="16" y2="20"></line>
-    <line x1="12" y1="16" x2="12" y2="20"></line>
-  </svg>
-
-  <!-- Light: sun -->
-  <svg id="modeIconSun" width="18" height="18" viewBox="0 0 24 24" fill="none"
-       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/>
-    <line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/>
-    <line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-  </svg>
-
-  <!-- Dark: moon -->
-  <svg id="modeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/>
-  </svg>
-
-  <span class="sr-only" id="modeLabel">Auto</span>
-</button>
-
-      <div class="subtitle" style="grid-column: 1 / -1; display:none" id="noResults">No matches. Try clearing filters or search.</div>
+        <svg id="modeIconAuto" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" ry="2"></rect><line x1="8" y1="20" x2="16" y2="20"></line><line x1="12" y1="16" x2="12" y2="20"></line></svg>
+        <svg id="modeIconSun"  width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="modeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg>
+        <span class="sr-only" id="modeLabel">Auto</span>
+      </button>
+      <div class="subtitle no-results" id="noResults">No matches. Try clearing filters or search.</div>
     </header>
 
     <div class="controls">
       <div class="search" role="search">
-        <!-- Magnifying glass -->
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="7"/>
-          <line x1="16.65" y1="16.65" x2="21" y2="21"/>
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.65" y1="16.65" x2="21" y2="21"/></svg>
         <label class="sr-only" for="q">Search</label>
         <input id="q" name="q" type="search" placeholder="Search simulations, topics, or tags… (⌘/Ctrl+K)" autocomplete="off" />
       </div>
@@ -224,93 +160,67 @@
     </div>
 
     <main class="grid" id="grid" aria-live="polite">
-      <!-- ===== CARDS (edit URLs and filenames as needed) ===== -->
-
+      <!-- cards … (unchanged content) -->
       <article class="card" tabindex="0" data-category="physics" data-tags="kinematics graphs position-time velocity-time slope">
         <h3>Kinematics Calculator</h3>
         <p>A comprehensive web-based calculator for 1D/2D kinematics and projectiles.</p>
         <div class="tags"><span class="tag">Physics</span><span class="tag">Graphs</span></div>
         <div class="actions">
           <a class="btn primary" href="https://atreyuartax.github.io/kinematics_calculator" rel="noopener">Open</a>
-          <a class="btn download-btn"
-             data-raw="https://raw.githubusercontent.com/AtreyuArtax/kinematics_calculator/main/index.html"
-             data-filename="kinematics_calculator.html">Download</a>
+          <a class="btn download-btn" data-raw="https://raw.githubusercontent.com/AtreyuArtax/kinematics_calculator/main/index.html" data-filename="kinematics_calculator.html">Download</a>
         </div>
       </article>
-
       <article class="card" tabindex="0" data-category="physics" data-tags="forces friction newton f=ma atwood incline">
         <h3>Newton’s 2nd Law Lab (Incline & Atwood)</h3>
         <p>Interactive <em>F = ma</em> scenarios with adjustable parameters and real-time plots.</p>
         <div class="tags"><span class="tag">Physics</span><span class="tag">Forces</span></div>
         <div class="actions">
           <a class="btn primary" href="https://atreyuartax.github.io/N2L-Pulley-Simulation/" rel="noopener">Open</a>
-          <a class="btn download-btn"
-             data-raw="https://raw.githubusercontent.com/AtreyuArtax/N2L-Pulley-Simulation/main/index.html"
-             data-filename="newtons_second_law_lab.html">Download</a>
+          <a class="btn download-btn" data-raw="https://raw.githubusercontent.com/AtreyuArtax/N2L-Pulley-Simulation/main/index.html" data-filename="newtons_second_law_lab.html">Download</a>
         </div>
       </article>
-
       <article class="card" tabindex="0" data-category="physics" data-tags="electricity equipotential field-lines mapping">
         <h3>Equipotential Mapping</h3>
         <p>Turn your grid of measured voltages into clear equipotential maps. Plot contours, inspect gradients, and export clean visuals for labs or reports.</p>
         <div class="tags"><span class="tag">Physics</span><span class="tag">Electricity</span></div>
         <div class="actions">
           <a class="btn primary" href="https://atreyuartax.github.io/equipotential_mapping/" rel="noopener">Open</a>
-          <a class="btn download-btn"
-             data-raw="https://raw.githubusercontent.com/AtreyuArtax/equipotential_mapping/main/index.html"
-             data-filename="equipotential_mapper.html">Download</a>
+          <a class="btn download-btn" data-raw="https://raw.githubusercontent.com/AtreyuArtax/equipotential_mapping/main/index.html" data-filename="equipotential_mapper.html">Download</a>
         </div>
       </article>
-
       <article class="card" tabindex="0" data-category="math" data-tags="algebra factoring solving quadratics lines inequalities">
         <h3>Grids.</h3>
         <p>SVG grid generator + equation/inequality plotting with clean exports.</p>
         <div class="tags"><span class="tag">Physics</span><span class="tag">Tools</span><span class="tag">Math</span><span class="tag">Graphing</span></div>
-        <div class="actions">
-          <a class="btn primary" href="https://atreyuartax.github.io/grids/" rel="noopener">Open</a>
-          <!-- Download disabled for now -->
-          <!-- <a class="btn download-btn"
-               data-raw="https://raw.githubusercontent.com/AtreyuArtax/grids/main/index.html"
-               data-filename="grids.html">Download</a> -->
-        </div>
+        <div class="actions"><a class="btn primary" href="https://atreyuartax.github.io/grids/" rel="noopener">Open</a></div>
       </article>
-
       <article class="card" tabindex="0" data-category="tools" data-tags="assessment generator worksheets randomizer bingo">
         <h3>Element Bingo</h3>
         <p>Run Element Bingo and generate printable cards entirely in the browser.</p>
         <div class="tags"><span class="tag">Tools</span></div>
         <div class="actions">
           <a class="btn primary" href="https://atreyuartax.github.io/element_bingo/" rel="noopener">Open</a>
-          <a class="btn download-btn"
-             data-raw="https://raw.githubusercontent.com/AtreyuArtax/element_bingo/main/index.html"
-             data-filename="element_bingo.html">Download</a>
+          <a class="btn download-btn" data-raw="https://raw.githubusercontent.com/AtreyuArtax/element_bingo/main/index.html" data-filename="element_bingo.html">Download</a>
         </div>
       </article>
-
       <article class="card" tabindex="0" data-category="lab" data-tags="ramp projectile experiment kinematics">
         <h3>Projectile Simulation — Ramps</h3>
         <p>Ramp → table → projectile; explore kinematics and dynamics.</p>
         <div class="tags"><span class="tag">Physics</span><span class="tag">Lab</span></div>
         <div class="actions">
           <a class="btn primary" href="https://atreyuartax.github.io/Ramp-Projectile-Simulator/" rel="noopener">Open</a>
-          <a class="btn download-btn"
-             data-raw="https://raw.githubusercontent.com/AtreyuArtax/Ramp-Projectile-Simulator/main/index.html"
-             data-filename="ramp_projectile_simulator.html">Download</a>
+          <a class="btn download-btn" data-raw="https://raw.githubusercontent.com/AtreyuArtax/Ramp-Projectile-Simulator/main/index.html" data-filename="ramp_projectile_simulator.html">Download</a>
         </div>
       </article>
-
       <article class="card" tabindex="0" data-category="lab" data-tags="friction static kinetic materials">
         <h3>Friction Simulator</h3>
         <p>Select materials and masses; visualize static peak and kinetic average.</p>
         <div class="tags"><span class="tag">Physics</span><span class="tag">Lab</span></div>
         <div class="actions">
           <a class="btn primary" href="https://atreyuartax.github.io/friction_simulator/" rel="noopener">Open</a>
-          <a class="btn download-btn"
-             data-raw="https://raw.githubusercontent.com/AtreyuArtax/friction_simulator/main/index.html"
-             data-filename="friction_simulation.html">Download</a>
+          <a class="btn download-btn" data-raw="https://raw.githubusercontent.com/AtreyuArtax/friction_simulator/main/index.html" data-filename="friction_simulation.html">Download</a>
         </div>
       </article>
-
     </main>
 
     <footer>
@@ -321,14 +231,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   <script>
-    
     // ===== Light/Dark Mode Toggle (with saved preference) =====
     const modeBtn = document.getElementById('modeBtn');
     const modeLabel = document.getElementById('modeLabel');
     const MODE_KEY = 'pmhub-mode'; // 'light' | 'dark' | 'auto'
 
     function applyMode(mode){
-        modeBtn.dataset.mode = mode;
+      modeBtn.dataset.mode = mode;
       if(mode==='light'){
         document.documentElement.setAttribute('data-theme','light');
         document.documentElement.style.colorScheme='light';
@@ -339,7 +248,7 @@
         document.documentElement.style.colorScheme='dark';
         modeLabel.textContent='Dark';
         modeBtn.setAttribute('aria-pressed','true');
-      } else { // auto
+      } else {
         document.documentElement.removeAttribute('data-theme');
         document.documentElement.style.colorScheme='light dark';
         modeLabel.textContent='Auto';
@@ -368,7 +277,6 @@
     const noResults = document.getElementById('noResults');
 
     let activeFilter = 'all';
-
     chips.forEach(ch => ch.addEventListener('click', () => {
       chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
       ch.setAttribute('aria-pressed', 'true');
@@ -412,12 +320,10 @@
         const url = btn.dataset.raw;
         const filename = btn.dataset.filename || 'download.html';
         if (!url) return;
-
         const originalText = btn.textContent;
         btn.textContent = 'Downloading…';
         btn.setAttribute('aria-busy','true');
         btn.style.pointerEvents = 'none';
-
         try {
           const res = await fetch(url, { mode: 'cors' });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -427,12 +333,8 @@
           dl.download = filename;
           document.body.appendChild(dl);
           dl.click();
-          setTimeout(() => {
-            URL.revokeObjectURL(dl.href);
-            dl.remove();
-          }, 1500);
+          setTimeout(() => { URL.revokeObjectURL(dl.href); dl.remove(); }, 1500);
         } catch (err) {
-          // Fallback: open raw URL so user can save manually
           window.open(url, '_blank', 'noopener');
         } finally {
           btn.textContent = originalText;
@@ -442,54 +344,55 @@
       });
     });
 
-    // ----- Elegant reorder with SortableJS -----
-(function () {
-  const grid = document.getElementById('grid');
-  const STORAGE_KEY = 'pmhub-card-order';
+    // ----- Elegant reorder with SortableJS (desktop only) -----
+    (function () {
+      const grid = document.getElementById('grid');
+      const STORAGE_KEY = 'pmhub-card-order';
 
-  // Ensure each card has stable id + data-id (used by Sortable store)
-  [...grid.querySelectorAll('.card')].forEach((card, i) => {
-    if (!card.id) {
-      const t = (card.querySelector('h3')?.textContent || `card-${i}`).trim()
-        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      card.id = t || `card-${i}`;
-    }
-    card.setAttribute('data-id', card.id);
-  });
+      // Desktop pointer guard
+      const isDesktopPointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!isDesktopPointer) return;
 
-  // Restore saved order (Sortable can do this via store.get too, but we also pre-apply)
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    if (Array.isArray(saved) && saved.length) {
-      const map = Object.fromEntries([...grid.children].map(el => [el.id, el]));
-      saved.forEach(id => { if (map[id]) grid.appendChild(map[id]); });
-    }
-  } catch {}
+      // Ensure stable ids
+      [...grid.querySelectorAll('.card')].forEach((card, i) => {
+        if (!card.id) {
+          const t = (card.querySelector('h3')?.textContent || `card-${i}`).trim()
+            .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          card.id = t || `card-${i}`;
+        }
+        card.setAttribute('data-id', card.id);
+      });
 
-  // Init Sortable on the grid
-  new Sortable(grid, {
-    animation: 150,
-    ghostClass: 'drag-ghost',
-    chosenClass: 'drag-chosen',
-    dragClass: 'dragging',
-    handle: 'h3',           // grab by the title only
-    filter: '.actions a, .actions .btn', // don’t start drag from buttons/links
-    preventOnFilter: true,          // allow clicks on filtered elements
-    fallbackTolerance: 3,           // tiny move required to start drag (helps click)
-    fallbackOnBody: true,           // better for some browsers
-    forceFallback: false,           // let modern DnD work; falls back when needed
+      // Restore saved order
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (Array.isArray(saved) && saved.length) {
+          const map = Object.fromEntries([...grid.children].map(el => [el.id, el]));
+          saved.forEach(id => { if (map[id]) grid.appendChild(map[id]); });
+        }
+      } catch {}
 
-    // Persist order automatically
-    store: {
-      get: () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'),
-      set: sortable => {
-        const order = sortable.toArray();  // uses data-id
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
-      }
-    }
-  });
-})();
-
+      // Init Sortable
+      new Sortable(grid, {
+        animation: 150,
+        ghostClass: 'drag-ghost',
+        chosenClass: 'drag-chosen',
+        dragClass: 'dragging',
+        handle: 'h3',
+        filter: '.actions a, .actions .btn',
+        preventOnFilter: true,
+        fallbackTolerance: 3,
+        fallbackOnBody: true,
+        forceFallback: false,
+        store: {
+          get: () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'),
+          set: sortable => {
+            const order = sortable.toArray();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+          }
+        }
+      });
+    })();
   </script>
 </body>
 </html>
